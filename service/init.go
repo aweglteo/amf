@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"encoding/csv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/sirupsen/logrus"
@@ -82,6 +83,7 @@ func (amf *AMF) Initialize(c *cli.Context) error {
 			return err
 		}
 	} else {
+
 		DefaultAmfConfigPath := path_util.Free5gcPath("free5gc/config/amfcfg.yaml")
 		if err := factory.InitConfigFactory(DefaultAmfConfigPath); err != nil {
 			return err
@@ -388,6 +390,31 @@ func (amf *AMF) Terminate() {
 		ngap_message.SendAMFStatusIndication(ran, unavailableGuamiList)
 		return true
 	})
+
+	// custom
+	// write csv format
+	RegistrationTimeCsvFilePath := path_util.Free5gcPath("free5gc/log/time.csv")
+	CsvFile, err := os.OpenFile(RegistrationTimeCsvFilePath, os.O_WRONLY | os.O_CREATE, 0600)
+
+	err = CsvFile.Truncate(0)
+	if err != nil {
+		// 
+	}
+	writer := csv.NewWriter(CsvFile)
+
+	amfSelf.UePool.Range(func(imsi interface{}, ue interface{}) bool {
+		amfUe := ue.(*context.AmfUe)
+		writer.Write([]string{
+			amfUe.StartReg.String(),
+			amfUe.EndReg.String(),
+			amfUe.StartPduEstablish.String(),
+			amfUe.EndReg.String(),
+		})
+		return true
+	})
+
+	writer.Flush()
+
 
 	ngap_service.Stop()
 

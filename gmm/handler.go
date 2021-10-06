@@ -167,6 +167,9 @@ func transport5GSMMessage(ue *context.AmfUe, anType models.AccessType,
 			// case iii) if the AMF does not have a PDU session routing context for the PDU session ID and the UE
 			// and the Request type IE is included and is set to "initial request"
 			case nasMessage.ULNASTransportRequestTypeInitialRequest:
+
+				ue.StartPduEstablish = time.Now()
+
 				var (
 					snssai models.Snssai
 					dnn    string
@@ -2088,6 +2091,9 @@ func HandleAuthenticationFailure(ue *context.AmfUe, anType models.AccessType,
 
 func HandleRegistrationComplete(ue *context.AmfUe, accessType models.AccessType,
 	registrationComplete *nasMessage.RegistrationComplete) error {
+
+	ue.EndReg = time.Now()
+
 	ue.GmmLog.Info("Handle Registration Complete")
 
 	if ue.T3550 != nil {

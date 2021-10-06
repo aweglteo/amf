@@ -189,6 +189,12 @@ type AmfUe struct {
 	NASLog      *logrus.Entry
 	GmmLog      *logrus.Entry
 	ProducerLog *logrus.Entry
+
+	// custom 
+	StartReg time.Time
+	EndReg time.Time
+	StartPduEstablish time.Time
+	EndPduEstablish time.Time
 }
 
 type AmfUeEventSubscription struct {
@@ -257,6 +263,13 @@ func (ue *AmfUe) init() {
 	ue.onGoing[models.AccessType__3_GPP_ACCESS] = new(OnGoing)
 	ue.onGoing[models.AccessType__3_GPP_ACCESS].Procedure = OnGoingProcedureNothing
 	ue.ReleaseCause = make(map[models.AccessType]*CauseAll)
+
+	// custom
+	ue.StartReg = time.Now()
+	ue.EndReg = time.Time{}
+	ue.StartPduEstablish = time.Time{}
+	ue.EndPduEstablish = time.Time{}
+
 }
 
 func (ue *AmfUe) ServingAMF() *AMFContext {
