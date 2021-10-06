@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"sync"
+	"strconv"
 	"syscall"
 	"encoding/csv"
 
@@ -405,10 +406,10 @@ func (amf *AMF) Terminate() {
 	amfSelf.UePool.Range(func(imsi interface{}, ue interface{}) bool {
 		amfUe := ue.(*context.AmfUe)
 		writer.Write([]string{
-			amfUe.StartReg.String(),
-			amfUe.EndReg.String(),
-			amfUe.StartPduEstablish.String(),
-			amfUe.EndReg.String(),
+			strconv.FormatInt(amfUe.StartReg, 10),
+			strconv.FormatInt(amfUe.EndReg, 10),
+			strconv.FormatInt(amfUe.StartPduEstablish, 10),
+			strconv.FormatInt(amfUe.EndPduEstablish, 10),
 		})
 		return true
 	})

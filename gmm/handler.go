@@ -168,7 +168,7 @@ func transport5GSMMessage(ue *context.AmfUe, anType models.AccessType,
 			// and the Request type IE is included and is set to "initial request"
 			case nasMessage.ULNASTransportRequestTypeInitialRequest:
 
-				ue.StartPduEstablish = time.Now()
+				ue.StoreStartPduEstablish()
 
 				var (
 					snssai models.Snssai
@@ -2092,7 +2092,7 @@ func HandleAuthenticationFailure(ue *context.AmfUe, anType models.AccessType,
 func HandleRegistrationComplete(ue *context.AmfUe, accessType models.AccessType,
 	registrationComplete *nasMessage.RegistrationComplete) error {
 
-	ue.EndReg = time.Now()
+	ue.StoreEndReg();
 
 	ue.GmmLog.Info("Handle Registration Complete")
 

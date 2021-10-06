@@ -3,7 +3,6 @@ package producer
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/free5gc/amf/context"
 	gmm_message "github.com/free5gc/amf/gmm/message"
@@ -118,7 +117,7 @@ func N1N2MessageTransferProcedure(ueContextID string, reqUri string,
 		switch requestData.N2InfoContainer.N2InformationClass {
 		case models.N2InformationClass_SM:
 
-			ue.EndPduEstablish = time.Now()
+			ue.StoreEndPduEstablish()
 
 			ue.ProducerLog.Debugf("Receive N2 SM Message (PDU Session ID: %d)", requestData.PduSessionId)
 			if smContext == nil {

@@ -191,10 +191,10 @@ type AmfUe struct {
 	ProducerLog *logrus.Entry
 
 	// custom 
-	StartReg time.Time
-	EndReg time.Time
-	StartPduEstablish time.Time
-	EndPduEstablish time.Time
+	StartReg int64
+	EndReg int64
+	StartPduEstablish int64
+	EndPduEstablish int64
 }
 
 type AmfUeEventSubscription struct {
@@ -265,10 +265,7 @@ func (ue *AmfUe) init() {
 	ue.ReleaseCause = make(map[models.AccessType]*CauseAll)
 
 	// custom
-	ue.StartReg = time.Now()
-	ue.EndReg = time.Time{}
-	ue.StartPduEstablish = time.Time{}
-	ue.EndPduEstablish = time.Time{}
+	ue.StartReg = time.Now().UnixNano()
 
 }
 
@@ -766,6 +763,23 @@ func (ue *AmfUe) CopyDataFromUeContextModel(ueContext models.UeContext) {
 	if ueContext.TraceData != nil {
 		ue.TraceData = ueContext.TraceData
 	}
+}
+
+// custom function
+func (ue *AmfUe) StoreStartReg() {
+	ue.StartReg = time.Now().UnixNano()
+}
+
+func (ue *AmfUe) StoreEndReg() {
+	ue.EndReg = time.Now().UnixNano()
+}
+
+func (ue *AmfUe) StoreStartPduEstablish() {
+	ue.StartPduEstablish = time.Now().UnixNano()
+}
+
+func (ue *AmfUe) StoreEndPduEstablish() {
+	ue.EndPduEstablish = time.Now().UnixNano()
 }
 
 // SM Context realted function
