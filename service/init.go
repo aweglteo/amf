@@ -2,14 +2,18 @@ package service
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
-	"sync"
 	"strconv"
+	"sync"
 	"syscall"
-	"encoding/csv"
+
+	_ "net/http/pprof"
 
 	"github.com/gin-contrib/cors"
 	"github.com/sirupsen/logrus"
@@ -236,6 +240,10 @@ func (amf *AMF) FilterCli(c *cli.Context) (args []string) {
 func (amf *AMF) Start() {
 	initLog.Infoln("Server started")
 
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
 	router.Use(cors.New(cors.Config{
 		AllowMethods: []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"},
@@ -395,11 +403,11 @@ func (amf *AMF) Terminate() {
 	// custom
 	// write csv format
 	RegistrationTimeCsvFilePath := path_util.Free5gcPath("free5gc/log/time.csv")
-	CsvFile, err := os.OpenFile(RegistrationTimeCsvFilePath, os.O_WRONLY | os.O_CREATE, 0600)
+	CsvFile, err := os.OpenFile(RegistrationTimeCsvFilePath, os.O_WRONLY|os.O_CREATE, 0600)
 
 	err = CsvFile.Truncate(0)
 	if err != nil {
-		// 
+		//
 	}
 	writer := csv.NewWriter(CsvFile)
 
@@ -415,7 +423,6 @@ func (amf *AMF) Terminate() {
 	})
 
 	writer.Flush()
-
 
 	ngap_service.Stop()
 
